@@ -1,0 +1,23 @@
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+*.suo
+.idea/
+
+# Secrets
+src/Api/appsettings.Development.json
+src/Api/appsettings.Production.json
+
+# EF Core local db files
+*.db
+*.db-shm
+*.db-wal
+
+publish/
+out/
+
+.DS_Store
+Thumbs.db
+*.log
