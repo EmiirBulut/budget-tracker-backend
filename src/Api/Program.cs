@@ -38,6 +38,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
             ClockSkew = TimeSpan.Zero // access tokens expire exactly at ExpiresAt
         };
+        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.Response.Headers.CacheControl = "no-store";
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -81,6 +89,21 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("FrontendPolicy");
+
+// Prevent browsers and proxies from caching any API response.
+// All endpoints serve user-specific data protected by JWT auth.
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        if (!context.Response.Headers.ContainsKey("Cache-Control"))
+        {
+            context.Response.Headers.CacheControl = "no-store";
+        }
+        return Task.CompletedTask;
+    });
+    await next(context);
+});
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

@@ -51,6 +51,7 @@ public class ExceptionHandlingMiddleware
     {
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
+        context.Response.Headers.CacheControl = "no-store";
 
         var body = new
         {
