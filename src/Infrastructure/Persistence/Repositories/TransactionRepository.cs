@@ -79,10 +79,16 @@ public class TransactionRepository : ITransactionRepository
             query = query.Where(t => t.Type == parsedType);
 
         if (startDate.HasValue)
-            query = query.Where(t => t.Date >= startDate.Value);
+        {
+            var start = DateTime.SpecifyKind(startDate.Value, DateTimeKind.Utc);
+            query = query.Where(t => t.Date >= start);
+        }
 
         if (endDate.HasValue)
-            query = query.Where(t => t.Date <= endDate.Value);
+        {
+            var end = DateTime.SpecifyKind(endDate.Value, DateTimeKind.Utc);
+            query = query.Where(t => t.Date <= end);
+        }
 
         return query;
     }

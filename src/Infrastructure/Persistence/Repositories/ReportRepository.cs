@@ -20,9 +20,12 @@ public class ReportRepository : IReportRepository
         DateTime to,
         CancellationToken cancellationToken = default)
     {
+        var utcFrom = DateTime.SpecifyKind(from, DateTimeKind.Utc);
+        var utcTo = DateTime.SpecifyKind(to, DateTimeKind.Utc);
+
         var transactions = await _dbContext.Transactions
             .AsNoTracking()
-            .Where(t => t.UserId == userId && t.Date >= from && t.Date <= to)
+            .Where(t => t.UserId == userId && t.Date >= utcFrom && t.Date <= utcTo)
             .ToListAsync(cancellationToken);
 
         var totalIncome = transactions
