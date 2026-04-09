@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<InstallmentPlan> InstallmentPlans => Set<InstallmentPlan>();
     public DbSet<InstallmentPayment> InstallmentPayments => Set<InstallmentPayment>();
+    public DbSet<UserPreferences> UserPreferences => Set<UserPreferences>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
