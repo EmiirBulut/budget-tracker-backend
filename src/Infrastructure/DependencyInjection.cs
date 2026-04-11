@@ -33,6 +33,15 @@ public static class DependencyInjection
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
+        services.AddMemoryCache();
+        services.AddHttpClient("tcmb", client =>
+        {
+            client.BaseAddress = new Uri("https://www.tcmb.gov.tr/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("BudgetTracker/1.0");
+        });
+        services.AddScoped<IFxRateService, TcmbFxRateService>();
+
         return services;
     }
 }
