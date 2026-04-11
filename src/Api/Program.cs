@@ -81,7 +81,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("FrontendPolicy");
-app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
