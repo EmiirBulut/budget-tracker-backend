@@ -17,10 +17,11 @@ public class CurrentUserService : ICurrentUserService
 
     public Guid GetCurrentUserId()
     {
-        // In .NET 8+, JwtBearerHandler uses JsonWebTokenHandler with MapInboundClaims=false,
-        // so the "sub" claim is NOT automatically mapped to ClaimTypes.NameIdentifier.
-        // We read it directly by its JWT claim name.
-        var sub = _httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var user = _httpContextAccessor.HttpContext?.User;
+        // Try both the raw "sub" claim and the mapped ClaimTypes.NameIdentifier,
+        // because ASP.NET Core's inbound claim type mapping may or may not be active.
+        var sub = user?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+               ?? user?.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (sub is null || !Guid.TryParse(sub, out var userId))
             throw new UnauthorizedException("User identity could not be determined.");
