@@ -47,6 +47,11 @@ public class SettingsController : ControllerBase
     [HttpGet("preferences")]
     [ProducesResponseType(typeof(UserPreferencesDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    // Prevent browsers from caching personalized preference responses.
+    // Without this, a previously authenticated response (200) is reused by the browser
+    // as a 304 on subsequent requests, even when the user is no longer authenticated.
+    // See docs/infinite-preferences-loop.md for full root-cause analysis.
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<ActionResult<UserPreferencesDto>> GetPreferences(CancellationToken cancellationToken)
     {
         var result = await _sender.Send(new GetUserPreferencesQuery(), cancellationToken);
